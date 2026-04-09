@@ -9,9 +9,10 @@ class NumberPuzzleApp:
     TILE_SIZE = 34
     PADDING = 12
     HEADER_HEIGHT = 56
+    FOOTER_HEIGHT = 42
     ROW_COLORS = (8, 9, 10, 12)
     WINDOW_WIDTH = PADDING * 2 + TILE_SIZE * BOARD_SIZE
-    WINDOW_HEIGHT = HEADER_HEIGHT + PADDING + TILE_SIZE * BOARD_SIZE + 30
+    WINDOW_HEIGHT = HEADER_HEIGHT + PADDING + TILE_SIZE * BOARD_SIZE + FOOTER_HEIGHT
     SHUFFLE_MOVES = 320
 
     def __init__(self):
@@ -190,9 +191,11 @@ class NumberPuzzleApp:
     def draw_footer(self):
         footer_y = self.HEADER_HEIGHT + self.TILE_SIZE * self.BOARD_SIZE + 10
         if self.is_cleared:
-            pyxel.text(24, footer_y, "CLEAR! PRESS N FOR A NEW GAME", 10)
+            pyxel.text(32, footer_y + 6, "CLEAR! PRESS N", 10)
+            pyxel.text(38, footer_y + 16, "FOR NEW GAME", 10)
         else:
-            pyxel.text(18, footer_y, "PLACE 1-15 IN ORDER AND LEAVE THE LAST SPACE EMPTY", 7)
+            pyxel.text(18, footer_y + 2, "ARRANGE 1-15 IN ORDER", 7)
+            pyxel.text(16, footer_y + 12, "LEAVE THE LAST SPACE EMPTY", 7)
 
 
 if __name__ == "__main__":

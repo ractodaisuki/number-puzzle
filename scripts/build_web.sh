@@ -27,4 +27,6 @@ cd "$ROOT_DIR"
 "$PYXEL_BIN" package "$BUILD_DIR" "$BUILD_DIR/number_puzzle.py"
 "$PYXEL_BIN" app2html "$APP_NAME.pyxapp"
 
+perl -0pi -e 's/gamepad: "enabled"/gamepad: "disabled"/g' "$APP_NAME.html"
+
 mv "$APP_NAME.html" "$ROOT_DIR/index.html"

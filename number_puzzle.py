@@ -11,6 +11,8 @@ class NumberPuzzleApp:
     HEADER_HEIGHT = 56
     FOOTER_HEIGHT = 42
     ROW_COLORS = (8, 9, 10, 12)
+    BUTTON_WIDTH = 44
+    BUTTON_HEIGHT = 18
     WINDOW_WIDTH = PADDING * 2 + TILE_SIZE * BOARD_SIZE
     WINDOW_HEIGHT = HEADER_HEIGHT + PADDING + TILE_SIZE * BOARD_SIZE + FOOTER_HEIGHT
     SHUFFLE_MOVES = 320
@@ -121,6 +123,10 @@ class NumberPuzzleApp:
         if not pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
             return
 
+        if self.is_over_reset_button(pyxel.mouse_x, pyxel.mouse_y):
+            self.reset_game()
+            return
+
         mouse_x = pyxel.mouse_x - self.PADDING
         mouse_y = pyxel.mouse_y - self.HEADER_HEIGHT
         if mouse_x < 0 or mouse_y < 0:
@@ -144,6 +150,15 @@ class NumberPuzzleApp:
             return int(self.clear_time - self.start_time)
         return int(time.time() - self.start_time)
 
+    def reset_button_rect(self):
+        x = self.WINDOW_WIDTH - self.BUTTON_WIDTH - 10
+        y = 10
+        return x, y, self.BUTTON_WIDTH, self.BUTTON_HEIGHT
+
+    def is_over_reset_button(self, mouse_x, mouse_y):
+        x, y, width, height = self.reset_button_rect()
+        return x <= mouse_x < x + width and y <= mouse_y < y + height
+
     def update(self):
         pyxel.mouse(True)
         self.handle_keyboard()
@@ -162,6 +177,16 @@ class NumberPuzzleApp:
         pyxel.text(12, 26, f"MOVES: {self.move_count:03}", 10)
         pyxel.text(92, 26, f"TIME: {self.elapsed_seconds():03}s", 11)
         pyxel.text(12, 40, "ARROWS/WASD OR CLICK / R:RESET", 6)
+        self.draw_reset_button()
+
+    def draw_reset_button(self):
+        x, y, width, height = self.reset_button_rect()
+        hovered = self.is_over_reset_button(pyxel.mouse_x, pyxel.mouse_y)
+        fill_color = 8 if hovered else 5
+        text_color = 7 if hovered else 6
+        pyxel.rect(x, y, width, height, fill_color)
+        pyxel.rectb(x, y, width, height, 7)
+        pyxel.text(x + 10, y + 6, "RESET", text_color)
 
     def draw_board(self):
         board_x = self.PADDING

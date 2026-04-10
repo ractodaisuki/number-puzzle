@@ -40,6 +40,8 @@ jobs:
         run: |
           mkdir -p dist
           cp index.html dist/index.html
+          cp three.html dist/three.html
+          cp -R js dist/js
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

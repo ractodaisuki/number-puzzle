@@ -1,6 +1,7 @@
 # number-puzzle
 
-[ゲームを起動](https://ractodaisuki.github.io/number-puzzle/)
+- [Pyxel版を起動](https://ractodaisuki.github.io/number-puzzle/)
+- [Three.js 3D版を起動](https://ractodaisuki.github.io/number-puzzle/three.html)
 
 ## ローカル起動
 

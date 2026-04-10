@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Number Puzzle 3D</title>
+  <style>
+    :root {
+      --bg-a: #07111b;
+      --bg-b: #102336;
+      --panel: rgba(12, 22, 35, 0.72);
+      --panel-border: rgba(255, 255, 255, 0.12);
+      --text: #f8f3e8;
+      --muted: #9fb0bd;
+      --accent: #f6bd60;
+      --accent-strong: #ff8c42;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(246, 189, 96, 0.18), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(42, 157, 143, 0.2), transparent 28%),
+        linear-gradient(160deg, var(--bg-a), var(--bg-b));
+    }
+
+    body {
+      position: relative;
+    }
+
+    #scene {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    .hud {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 18px;
+      pointer-events: none;
+    }
+
+    .topbar,
+    .bottombar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      border: 1px solid var(--panel-border);
+      background: var(--panel);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.24);
+    }
+
+    .brand {
+      padding: 18px 20px;
+      max-width: 430px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      letter-spacing: 0.16em;
+      font-size: 11px;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(26px, 3vw, 40px);
+      line-height: 0.95;
+    }
+
+    .brand p,
+    .status p {
+      margin: 10px 0 0;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+      min-width: 280px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .metric {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .metric span {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .metric strong {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      pointer-events: auto;
+    }
+
+    .actions button,
+    .actions a {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 16px;
+      text-decoration: none;
+      font: inherit;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, color 120ms ease;
+    }
+
+    .actions button:hover,
+    .actions a:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #1b1206;
+    }
+
+    .secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .status {
+      padding: 16px 18px;
+      max-width: 540px;
+    }
+
+    .status strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .status p {
+      margin: 0;
+    }
+
+    .hint {
+      padding: 16px 18px;
+      max-width: 340px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .hint strong {
+      color: var(--text);
+    }
+
+    .fallback {
+      position: absolute;
+      inset: auto 18px 18px 18px;
+      display: none;
+      padding: 16px 18px;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 720px) {
+      .hud {
+        padding: 12px;
+      }
+
+      .topbar,
+      .bottombar {
+        gap: 12px;
+      }
+
+      .brand,
+      .status,
+      .hint {
+        max-width: none;
+      }
+
+      .side {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .metric strong {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+
+  <div class="hud">
+    <div class="topbar">
+      <section class="brand card">
+        <span class="eyebrow">THREE.JS EDITION</span>
+        <h1>Number Puzzle 3D</h1>
+        <p>隣のタイルをクリックまたはタップしてスライド。完成形では横一列ごとに色がそろいます。</p>
+      </section>
+
+      <div class="side">
+        <section class="stats card">
+          <div class="metric">
+            <span>MOVES</span>
+            <strong id="moves">000</strong>
+          </div>
+          <div class="metric">
+            <span>TIME</span>
+            <strong id="time">000s</strong>
+          </div>
+          <div class="metric">
+            <span>STATE</span>
+            <strong id="state">PLAY</strong>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button id="shuffle-button" class="primary" type="button">New Puzzle</button>
+          <a class="secondary" href="./">Pyxel 2D</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottombar">
+      <section class="status card">
+        <strong id="status-title">Slide the board</strong>
+        <p id="status-text">空白マスの隣にあるタイルだけ動かせます。キーボードでは矢印キー / WASD、`R` でシャッフルです。</p>
+      </section>
+
+      <section class="hint card">
+        <strong>Tips</strong><br>
+        盤面は固定カメラ寄りにしてあるので、スマホでもそのまま遊べます。色は完成時の行を表しています。
+      </section>
+    </div>
+  </div>
+
+  <div id="fallback" class="fallback card">
+    WebGL が利用できませんでした。対応ブラウザで開き直してください。
+  </div>
+
+  <script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.175.0/build/three.module.js"
+      }
+    }
+  </script>
+  <script type="module" src="./js/three_puzzle.js"></script>
+</body>
+</html>
